@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 
 const PatientSchema = mongoose.Schema(
   {
-    name: { type: String, requred: true },
-    email: { type: String, requred: true },
+    username: { type: String, requred: true },
+    password: { type: String, requred: true },
   },
   { timestamps: true }
 );

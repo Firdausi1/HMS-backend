@@ -33,4 +33,8 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use("/api/patient", patientRoute);
+app.get("/api", (req, res) => {
+  res.send("Welcome to HMS api");
+});
+
+app.use("/api/patients", patientRoute);
