@@ -2,7 +2,8 @@ const mongoose = require("mongoose");
 
 const PatientSchema = mongoose.Schema(
   {
-    patient_id: {type: mongoose.Schema.Types.ObjectId, ref: "Patient"},
+    name: { type: String, requred: true },
+    email: { type: String, requred: true },
   },
   { timestamps: true }
 );
