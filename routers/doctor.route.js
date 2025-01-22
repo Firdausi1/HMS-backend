@@ -9,8 +9,8 @@ const {
 } = require("../controllers/doctor.controller");
 const router = express.Router();
 
-router.get("/get", getDoctor);
-router.get("/get/:id", getSingleDoctor);
+router.get("/", getDoctor);
+router.get("/:id", getSingleDoctor);
 router.post("/register", DocRegister);
 router.post("/login", loginDoctor);
 router.delete("/:id", deleteDoctor);
