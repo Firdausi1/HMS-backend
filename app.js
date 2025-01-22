@@ -4,9 +4,15 @@ const express = require("express");
 const MongoStore = require("connect-mongo");
 const session = require("express-session");
 const patientRoute = require("./routers/patient.route");
+const receptionistRoute = require("./routers/receptionist.route");
+const queueRoute = require("./routers/queue.route");
+const appointmentRoute = require("./routers/appointment.route");
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 const app = express();
+
+
 
 mongoose
   .connect(process.env.DATABASE_URI)
@@ -19,6 +25,8 @@ mongoose
   .catch((err) => console.log(err));
 
 //middlewares
+app.use(cors());
+
 app.use(
   session({
     secret: "keyboard cat",
@@ -30,6 +38,7 @@ app.use(
     cookie: { maxAge: new Date(Date.now() + 3600000) },
   })
 );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -38,3 +47,7 @@ app.get("/api", (req, res) => {
 });
 
 app.use("/api/patients", patientRoute);
+app.use("/api/receptionist", receptionistRoute);
+app.use("/api/queue",queueRoute);
+app.use("/api/appointment",appointmentRoute);
+
