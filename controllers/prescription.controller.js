@@ -1,9 +1,10 @@
 const Prescription = require("../models/prescription.model");
+const Medication = require("../models/medication.model");
 
 
 
 const createPrescription = async (req, res) => {
-    const { patientId } = req.body;
+    const { patientId, Medication } = req.body;
 
     const prescription = new Prescription({
       patientId,
