@@ -3,8 +3,11 @@ require("dotenv").config();
 const express = require("express");
 const MongoStore = require("connect-mongo");
 const session = require("express-session");
-const patientRoute = require("./routers/patient.route");
+const doctorRouter = require("./routers/doctor.route");
+const accountantRouter = require("./routers/accountant.route");
+const prescriptionRouter = require("./routers/prescription.route");
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 const app = express();
 
@@ -30,6 +33,8 @@ app.use(
     cookie: { maxAge: new Date(Date.now() + 3600000) },
   })
 );
+
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -37,4 +42,6 @@ app.get("/api", (req, res) => {
   res.send("Welcome to HMS api");
 });
 
-app.use("/api/patients", patientRoute);
+app.use("/api/doctor", doctorRouter);
+app.use("/api/accountant", accountantRouter);
+app.use("/api/prescription", prescriptionRouter);
