@@ -1,9 +1,21 @@
-const Patient = require("../models/patient.model");
+const patientModel = require("../models/patient.model");
+
+const getAllPatients = async (req, res) => {
+  try {
+    const patients = await patientModel.find();
+    if (!patients) {
+      return res.status(401).json({ message: "No Patients record found" });
+    }
+    res.status(200).json(patients);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
 
 const getPatient = async (req, res) => {
   try {
     const { patient_id } = req.query;
-    const patient = await Patient.findById(patient_id);
+    const patient = await patientModel.findById(patient_id);
     if (!patient) {
       return res.status(401).json({ message: "Invalid patient id" });
     }
@@ -13,4 +25,57 @@ const getPatient = async (req, res) => {
   }
 };
 
-module.exports = { getPatient };
+const createPatient = async (req, res) => {
+  try {
+    const patient = await patientModel.create(req.body);
+
+    if (patient) {
+      await patient.save();
+      res.status(200).json(patient);
+    } else {
+      res.status(401).json({ message: "couldn't create patient" });
+    }
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Update a patient's details
+const updatePatient = async (req, res) => {
+  try {
+    const { patient_id } = req.params; // Patient ID from route parameters
+    const updatedData = req.body; // Data to update from request body
+
+    const patient = await patientModel.findByIdAndUpdate(
+      patient_id,
+      updatedData,
+      { new: true } // Return the updated document
+    );
+
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    res.status(200).json({ message: "Patient updated successfully", patient });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// Delete a patient
+const deletePatient = async (req, res) => {
+  try {
+    const { patient_id } = req.params; // Patient ID from route parameters
+
+    const patient = await patientModel.findByIdAndDelete(patient_id);
+
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    res.status(200).json({ message: "Patient deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+module.exports = { getAllPatients, getPatient, createPatient ,updatePatient, deletePatient};
