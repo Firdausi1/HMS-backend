@@ -36,5 +36,5 @@ const nurseSchema = new mongoose.Schema({
 },
 { timestamps : true } 
 );
-const nurseModel = mongoose.model("nurse", nurseSchema);
+const nurseModel = mongoose.model("Nurse", nurseSchema);
 module.exports = nurseModel;

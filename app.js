@@ -5,6 +5,7 @@ const MongoStore = require("connect-mongo");
 const session = require("express-session");
 const patientRoute = require("./routers/patient.route");
 const nurseRoute = require("./routers/nurseRoute");
+const vitalsRoute = require("./routers/vitalsRoute");
 const mongoose = require("mongoose");
 
 const app = express();
@@ -36,3 +37,4 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use("/api/patients", patientRoute);
 app.use("/api/nurse", nurseRoute);
+app.use("/api/vitals", vitalsRoute);
