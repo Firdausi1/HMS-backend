@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const allotmentSchema =  new mongoose.Schema({
+const bedAllotmentSchema =  new mongoose.Schema({
    patient: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Patient",
@@ -40,5 +40,5 @@ const allotmentSchema =  new mongoose.Schema({
 { timestamps: true }
 );
 
-const allotmentModel =  mongoose.model("Allotment", allotmentSchema);
-module.exports = allotmentModel;
+const bedAllotmentModel =  mongoose.model("BedAllotment", bedAllotmentSchema);
+module.exports = bedAllotmentModel;

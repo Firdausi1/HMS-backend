@@ -4,14 +4,12 @@ const express = require("express");
 const MongoStore = require("connect-mongo");
 const session = require("express-session");
 const patientRoute = require("./routers/patient.route");
-<<<<<<< HEAD
 const nurseRoute = require("./routers/nurseRoute");
+const bedAllotmentRoute = require("./routers/bedAllotmentRoute");
 const vitalsRoute = require("./routers/vitalsRoute");
-=======
 const receptionistRoute = require("./routers/receptionist.route");
 const queueRoute = require("./routers/queue.route");
 const appointmentRoute = require("./routers/appointment.route");
->>>>>>> c6e8412285f44bebe7c651ba5302683d3f06e609
 const mongoose = require("mongoose");
 const cors = require("cors");
 
@@ -47,13 +45,13 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use("/api/patients", patientRoute);
-app.use("/api/nurse", nurseRoute);
-app.use("/api/vitals", vitalsRoute);
 app.get("/api", (req, res) => {
   res.send("Welcome to HMS api");
 });
 
+app.use("/api/nurse", nurseRoute);
+app.use("/api/vitals", vitalsRoute);
+app.use("/api/bedallotment", bedAllotmentRoute);
 app.use("/api/patients", patientRoute);
 app.use("/api/receptionist", receptionistRoute);
 app.use("/api/queue",queueRoute);
