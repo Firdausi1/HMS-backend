@@ -124,7 +124,7 @@ const createAppointment = async (req, res) => {
 // Get all appointments
 const getAppointments = async (req, res) => {
   try {
-    const appointments = await Appointment.find()
+    const appointments = await appointmentModel.find()
       .populate("patient", "name email") // Populate patient field with 'name' and 'email'
       .sort({ date: 1 }); // Sort appointments by date (earliest first)
 
@@ -133,6 +133,7 @@ const getAppointments = async (req, res) => {
       data: appointments,
     });
   } catch (error) {
+    console.error(error); // Log the error for debugging
     res.status(500).json({ message: "Error retrieving appointments", error: error.message });
   }
 };
