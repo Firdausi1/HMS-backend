@@ -7,14 +7,11 @@ const doctorRouter = require("./routers/doctor.route");
 const accountantRouter = require("./routers/accountant.route");
 const prescriptionRouter = require("./routers/prescription.route");
 const patientRoute = require("./routers/patient.route");
-<<<<<<< HEAD
 const nurseRoute = require("./routers/nurseRoute");
 const vitalsRoute = require("./routers/vitalsRoute");
-=======
 const receptionistRoute = require("./routers/receptionist.route");
 const queueRoute = require("./routers/queue.route");
 const appointmentRoute = require("./routers/appointment.route");
->>>>>>> c6e8412285f44bebe7c651ba5302683d3f06e609
 const mongoose = require("mongoose");
 const cors = require("cors");
 
@@ -50,9 +47,7 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use("/api/patients", patientRoute);
-app.use("/api/nurse", nurseRoute);
-app.use("/api/vitals", vitalsRoute);
+
 app.get("/api", (req, res) => {
   res.send("Welcome to HMS api");
 });
@@ -64,4 +59,7 @@ app.use("/api/patients", patientRoute);
 app.use("/api/receptionist", receptionistRoute);
 app.use("/api/queue",queueRoute);
 app.use("/api/appointment",appointmentRoute);
+app.use("/api/patients", patientRoute);
+app.use("/api/nurse", nurseRoute);
+app.use("/api/vitals", vitalsRoute);
 
