@@ -1,4 +1,4 @@
-const Patient = require("../models/patient.model");
+const patientModel = require("../models/patient.model");
 const nurseModel = require("../models/nurseModel");
 const vitalsModel = require("../models/vitalsModel");
 
@@ -7,21 +7,19 @@ const addVitals = async (req, res) => {
   try {
     const { patientId, nurseId, temperature, bloodPressure, heartRate, respiratoryRate, oxygenSaturation, notes } = req.body;
 
-    // validate patientId and nurseId are provided
-    if (!patientId || !nurseId) return res.status(400).send({ message: "Patient ID and Nurse ID are required" });
-
+  
     // check if patient exists
-    const patient = await Patient.findById(patientId);
+    const patient = await patientModel.findById(patientId);
     if (!patient) return res.status(404).send({ message: "Patient not found"});
 
     // check if nurse exists
     const nurse = await nurseModel.findById(nurseId);
-    if (!nurse) return res.status(404).send({ message: "Nurse not"});
+    if (!nurse) return res.status(404).send({ message: "Nurse not found"});
 
     // create a new patient vitals record
     const newVitals = new vitalsModel({
-      patient: patientId,
-      nurse: nurseId,
+      patient: patient._id,
+      nurse: nurse._id,
       temperature,
       bloodPressure,
       heartRate,
@@ -49,7 +47,10 @@ const addVitals = async (req, res) => {
 // creating api to get all vitals for all patients
 const getAllVitals = async (req, res) => {
   try {
-    const vitals = await vitalsModel.find().populate("Patient, Nurse");
+    const vitals = await vitalsModel.find()
+    .populate("patient", "name")
+    .populate("nurse", "full_name")
+    .lean();
     res.status(200).send({
       success: true,
       message: "All patient's vital signs retrieved successfully",
@@ -68,7 +69,10 @@ const getAllVitals = async (req, res) => {
 const getVitalsByPatientId = async (req, res) => {
   try {
     const { id } = req.params;
-    const vitals = await vitalsModel.find({ patient: id }).populate("Patient, Nurse");
+    const vitals = await vitalsModel.find({ patient: id })
+    .populate("patient", "name")
+    .populate("nurse", "full_name")
+    .lean();
 
     if (!vitals || vitals.length === 0) {
       return res.status(404).send({
@@ -94,8 +98,13 @@ const getVitalsByPatientId = async (req, res) => {
 const updateVitals = async (req, res) => {
   try {
     const { id } = req.params;
-    const { vitalSigns } = req.body;
-    const updatedVitals = await vitalsModel.findByIdAndUpdate(id, vitalSigns, { new: true });
+    const vitalData  = req.body;
+    const updatedVitals = await vitalsModel.findByIdAndUpdate(id, vitalData, 
+      { new: true,
+        runValidators: true 
+       })
+       .populate("patient", "name")
+       .populate("nurse", "full_name");
     if (!updatedVitals) return res.status(404).send({ success: false, message: "Vital signs not found" });
     res.status(200).send({
       success: true,

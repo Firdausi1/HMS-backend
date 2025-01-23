@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const allotmentSchema =  new mongoose.Schema({
+const bedAllotmentSchema =  new mongoose.Schema({
    patient: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Patient",
@@ -11,13 +11,10 @@ const allotmentSchema =  new mongoose.Schema({
       ref: "Nurse",
       required: true,
     },
-    bedNumber: {
-      type: String,
-      required: true, // e.g., "B-101" or "ICU-12"
-    },
-    ward: {
-      type: String,
-      required: true, // e.g., "General Ward", "ICU", "Private Room"
+    bed: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Bed",
+      required: true,
     },
     allotmentDate: {
       type: Date,
@@ -29,9 +26,9 @@ const allotmentSchema =  new mongoose.Schema({
     },
     status: {
       type: String,
-      enum: ["Active", "Discharged", "Expired"],
+      enum: ["Alloted", "Discharged", "Expired"],
       required: true,
-      default: "Active",
+      default: "Alloted",
     },
     notes: {
       type: String, // Any additional information related to the allotment
@@ -40,5 +37,5 @@ const allotmentSchema =  new mongoose.Schema({
 { timestamps: true }
 );
 
-const allotmentModel =  mongoose.model("Allotment", allotmentSchema);
-module.exports = allotmentModel;
+const bedAllotmentModel =  mongoose.model("BedAllotment", bedAllotmentSchema);
+module.exports = bedAllotmentModel;
