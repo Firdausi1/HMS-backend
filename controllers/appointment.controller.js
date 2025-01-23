@@ -1,163 +1,107 @@
 const appointmentModel = require("../models/appointment.model");
-const patientModel = require("../models/patient.model"); // Assuming you have a Patient model
+const patientModel = require("../models/patient.model");
 
-
-
-// Create a new appointment
+// Create new appointment
 const createAppointment = async (req, res) => {
   try {
-    const { patient, date, doctorName } = req.body;
+    const { patientId, doctorName, date, time } = req.body; // Added `time`
 
-    // Validate required fields
-    if (!patient || !date || !doctorName) {
-      return res.status(400).json({ message: "Patient, date, and doctorName are required" });
+    // Validate input
+    if (!patientId || !doctorName || !date || !time) {
+      return res.status(400).json({ message: "All fields are required." });
     }
 
-    // Validate patient ObjectId
-    if (!mongoose.Types.ObjectId.isValid(patient)) {
-      return res.status(400).json({ message: "Invalid patient ID" });
+    // Check if the patient exists and get the patient's name
+    const patient = await patientModel.findById(patientId);
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found." });
     }
 
-    // Fetch patient name from the Patient model
-    const patientRecord = await patientModel.findById(patient);
+    const patientName = patient.name; // Assuming the patient model has a 'name' field
 
-    if (!patientRecord) {
-      return res.status(404).json({ message: "Patient not found" });
-    }
-
-    const patient_name = patientRecord.name; // Assuming the Patient model has a 'name' field
-
-    // Create the new appointment
+    // Create and save the appointment
     const newAppointment = new appointmentModel({
-      patient,
-      patient_name,
-      date,
+      patient: patientId,
+      patientName,  // Save the patient's name along with the appointment
       doctorName,
+      date,
+      time, // Added `time` field
     });
 
-    const savedAppointment = await newAppointment.save();
+    await newAppointment.save();
 
     res.status(201).json({
-      message: "Appointment created successfully",
-      data: savedAppointment,
+      message: "Appointment created successfully.",
+      appointment: {
+        ...newAppointment.toObject(),
+        patientName,  // Ensure patientName is included in the response
+      },
     });
   } catch (error) {
-    res.status(500).json({ message: "Error creating appointment", error: error.message });
+    console.error("Error creating appointment:", error);
+    res.status(500).json({ message: "Failed to create appointment." });
   }
 };
-
-// // Create a new appointment
-// const createAppointment = async (req, res) => {
-//   try {
-//     const { patient_name, date, doctorName } = req.body;
-
-//     // Validate required fields
-//     if (!patient_name || !date || !doctorName) {
-//       return res.status(400).json({ message: "Patient name, date, and doctor name are required" });
-//     }
-
-//     // Fetch patient ID from the Patient model using the patient_name
-//     const patientRecord = await patientModel.findOne({ name: patient_name });
-
-//     if (!patientRecord) {
-//       return res.status(404).json({ message: "Patient not found" });
-//     }
-
-//     const patientId = patientRecord._id;
-
-//     // Create the new appointment
-//     const newAppointment = new appointmentModel({
-//       patient: patientId,
-//       patient_name,
-//       date,
-//       doctorName,
-//     });
-
-//     const savedAppointment = await newAppointment.save();
-
-//     res.status(201).json({
-//       message: "Appointment created successfully",
-//       data: savedAppointment,
-//     });
-//   } catch (error) {
-//     res.status(500).json({ message: "Error creating appointment", error: error.message });
-//   }
-// };
-// Create a new appointment
-// const createAppointment = async (req, res) => {
-//   try {
-//     const { patient, date, doctorName } = req.body;
-
-//     // Validate required fields
-//     if (!patient || !date || !doctorName) {
-//       return res.status(400).json({ message: "Patient, date, and doctorName are required" });
-//     }
-
-//     // Fetch patient name from the Patient model
-//     const patientRecord = await Patient.findById(patient);
-
-//     if (!patientRecord) {
-//       return res.status(404).json({ message: "Patient not found" });
-//     }
-
-//     const patient_name = patientRecord.name; // Assuming the Patient model has a 'name' field
-
-//     // Create the new appointment
-//     const newAppointment = new Appointment({
-//       patient,
-//       patient_name,
-//       date,
-//       doctorName,
-//     });
-
-//     const savedAppointment = await newAppointment.save();
-
-//     res.status(201).json({
-//       message: "Appointment created successfully",
-//       data: savedAppointment,
-//     });
-//   } catch (error) {
-//     res.status(500).json({ message: "Error creating appointment", error: error.message });
-//   }
-// };
 
 // Get all appointments
 const getAppointments = async (req, res) => {
   try {
-    const appointments = await Appointment.find()
-      .populate("patient", "name email") // Populate patient field with 'name' and 'email'
-      .sort({ date: 1 }); // Sort appointments by date (earliest first)
+    // Fetch appointments and populate patient details
+    const appointments = await appointmentModel.find()
+      .populate("patient", "name gender age address") // Select specific fields from the Patient model
+      .sort({ date: -1 });
 
-    res.status(200).json({
-      message: "Appointments retrieved successfully",
-      data: appointments,
-    });
+    res.status(200).json(appointments);
   } catch (error) {
-    res.status(500).json({ message: "Error retrieving appointments", error: error.message });
+    console.error("Error fetching appointments:", error);
+    res.status(500).json({ message: "Failed to fetch appointments." });
   }
 };
 
-// Delete an appointment
+// Get single appointment
+const getSingleAppointment = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find the appointment by ID and populate patient details
+    const appointment = await appointmentModel.findById(id)
+      .populate("patient", "name gender age address"); // Select specific fields from the Patient model
+
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found." });
+    }
+
+    res.status(200).json(appointment);
+  } catch (error) {
+    console.error("Error fetching appointment:", error);
+    res.status(500).json({ message: "Failed to fetch appointment." });
+  }
+};
+
+// Delete appointment
 const deleteAppointment = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const deletedAppointment = await Appointment.findByIdAndDelete(id);
-
-    if (!deletedAppointment) {
-      return res.status(404).json({ message: "Appointment not found" });
+    // Find the appointment by ID
+    const appointment = await appointmentModel.findById(id);
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found." });
     }
 
-    res.status(200).json({
-      message: "Appointment deleted successfully",
-    });
+    // Delete the appointment
+    await appointment.deleteOne();
+
+    res.status(200).json({ message: "Appointment deleted successfully." });
   } catch (error) {
-    res.status(500).json({ message: "Error deleting appointment", error: error.message });
+    console.error("Error deleting appointment:", error);
+    res.status(500).json({ message: "Failed to delete appointment." });
   }
 };
 
 module.exports = {
   createAppointment,
   getAppointments,
+  getSingleAppointment,
   deleteAppointment,
 };

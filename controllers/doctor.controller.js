@@ -38,6 +38,8 @@ const getDoctor = (req, res) => {
 }
 };
 
+
+  
 const getSingleDoctor = async (req, res) => {
     try {
         const id = req.params.id;
