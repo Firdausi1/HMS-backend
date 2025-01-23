@@ -9,6 +9,7 @@ const AccountantSchema = mongoose.Schema(
     password: { type: String, required: true },
     phoneNo: { type: String, required: true },
     address: { type: String, required: true },
+    departmentId: mongoose.Schema.Types.ObjectId,
   },
   { timestamps: true }
 );

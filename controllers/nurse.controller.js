@@ -12,7 +12,7 @@ const registerNurse = async (req, res) => {
       id: resp._id,
       full_name: resp.full_name,
       email: resp.email,
-      department: resp.department,
+      departmentId: resp.departmentId,
       address: resp.address,
       phone: resp.phone,
       appointment_date: resp.appointment_date,
@@ -127,7 +127,7 @@ const loginNurse = async (req, res) => {
       id: find_nurse._id,
       full_name: find_nurse.full_name,
       email: find_nurse.email,
-      department: find_nurse.department,
+      departmentId: find_nurse.departmentId,
       address: find_nurse.address,
       phone: find_nurse.phone,
       appointment_date: find_nurse.appointment_date,
@@ -158,6 +158,7 @@ const updateNurse = async (req, res) => {
       phone,
       appointment_date,
       password,
+      departmentId
     } = req.body;
 
     // Hash the new password if it is provided
@@ -174,6 +175,7 @@ const updateNurse = async (req, res) => {
         address,
         phone,
         appointment_date,
+        departmentId,
         password: hashedPassword,
       },
       { new: true, runValidators: true }
