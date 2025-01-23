@@ -3,22 +3,39 @@ const bcrypt = require("bcryptjs");
 
 const getEmployees = async (req, res) => {
   try {
-    const employees = await employeeModel.find();
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const skip = (page - 1) * limit;
+
+    const employees = await employeeModel.find().skip(skip).limit(limit);
     if (!employees)
       return res
         .status(404)
         .send({ success: false, message: "No Employee record found" });
 
-    res.status(200).json(employees);
+    const totalEmployees = await employeeModel.countDocuments();
+
+    res.status(200).send({
+      success: true,
+      message: "Employees fetched successfully",
+      data: employees,
+      pagination: {
+        total: totalEmployees,
+        currentPage: page,
+        totalPages: Math.ceil(totalEmployees / limit),
+        hasNextPage: page * limit < totalEmployees,
+        hasPrevPage: page > 1,
+      },
+    });
   } catch (error) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
 const getEmployee = async (req, res) => {
   try {
-    const { employee_id } = req.params;
-    const employee = await employeeModel.findById(employee_id);
+    const { id } = req.params;
+    const employee = await employeeModel.findById(id);
     if (!employee)
       return res
         .status(404)
@@ -53,6 +70,7 @@ const createEmployee = async (req, res) => {
       address: req.body.address,
       departmentId: req.body.departmentId,
       role: req.body.role,
+      profile_image: req.body.profile_image,
     };
     const create_employee = await employeeModel.create(newEmployee);
     if (create_employee) {
@@ -71,6 +89,7 @@ const createEmployee = async (req, res) => {
           address: resp.address,
           departmentId: resp.departmentId,
           role: resp.role,
+          profile_image: resp.profile_image,
         },
       });
     } else {
@@ -109,8 +128,15 @@ const loginEmployee = async (req, res) => {
         data: {
           id: employee._id,
           firstName: employee.firstName,
+          lastName: employee.lastName,
           email: employee.email,
+          username: employee.username,
+          specialization: employee.specialization,
+          phone: employee.phone,
+          address: employee.address,
+          departmentId: employee.departmentId,
           role: employee.role,
+          profile_image: employee.profile_image,
         },
       });
     } else {
@@ -137,22 +163,82 @@ const deleteEmployee = async (req, res) => {
   } catch (err) {
     res.send({
       type: "error",
-      message: "Could not employee Doctor",
+      message: "Could not delete employee record",
       error: err.message,
     });
   }
 };
 
 const updateEmployee = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const {
+      firstName,
+      lastName,
+      email,
+      phone,
+      address,
+      specialization,
+      departmentId,
+      profile_image,
+    } = req.body;
+    const updatedEmployee = await employeeModel.findByIdAndUpdate(
+      id,
+      {
+        firstName,
+        lastName,
+        email,
+        phone,
+        address,
+        specialization,
+        departmentId,
+        profile_image,
+      },
+      { new: true }
+    );
+    if (!updatedEmployee) {
+      res.send({ type: "error", message: "Invalid employee id" });
+      return;
+    }
+    res.send({ type: "success", status_code: 200, data: updatedEmployee });
+  } catch (err) {
+    res.send({
+      type: "error",
+      message: "Could not update employee",
+      error: err.message,
+    });
+  }
+};
+
+const updatePassword = async (req, res) => {
   const id = req.params.id;
-  const { name, email, phone, address, specialization, departmentId } =
-    req.body;
-  const updatedEmployee = await employeeModel.findByIdAndUpdate(
-    id,
-    { name, email, phone, address, specialization, departmentId },
-    { new: true }
-  );
-  res.send({ type: "success", status_code: 200, data: updatedEmployee });
+  try {
+    const employee = await employeeModel.findById(id);
+    const compare_password = await bcrypt.compare(
+      req.body.oldPassword,
+      employee.password
+    );
+
+    if (!compare_password) {
+      res.send({ type: "error", message: "Invalid Old Password" });
+      return;
+    }
+    const encrypt_password = await bcrypt.hash(req.body.newPassword, 12);
+    const updatedEmployee = await employeeModel.findByIdAndUpdate(
+      id,
+      {
+        password: encrypt_password,
+      },
+      { new: true }
+    );
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (err) {
+    res.send({
+      type: "error",
+      message: "Could not update employee",
+      error: err.message,
+    });
+  }
 };
 
 module.exports = {
@@ -162,4 +248,5 @@ module.exports = {
   deleteEmployee,
   updateEmployee,
   loginEmployee,
+  updatePassword,
 };
