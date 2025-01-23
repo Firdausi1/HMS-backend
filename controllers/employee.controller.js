@@ -18,7 +18,7 @@ const getEmployees = async (req, res) => {
     res.status(200).send({
       success: true,
       message: "Employees fetched successfully",
-      data: pharmacists,
+      data: employees,
       pagination: {
         total: totalEmployees,
         currentPage: page,
@@ -28,14 +28,14 @@ const getEmployees = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
 const getEmployee = async (req, res) => {
   try {
-    const { employee_id } = req.params;
-    const employee = await employeeModel.findById(employee_id);
+    const { id } = req.params;
+    const employee = await employeeModel.findById(id);
     if (!employee)
       return res
         .status(404)
@@ -171,11 +171,26 @@ const deleteEmployee = async (req, res) => {
 
 const updateEmployee = async (req, res) => {
   const id = req.params.id;
-  const { name, email, phone, address, specialization, departmentId } =
-    req.body;
+  const {
+    firstName,
+    lastName,
+    email,
+    phone,
+    address,
+    specialization,
+    departmentId,
+  } = req.body;
   const updatedEmployee = await employeeModel.findByIdAndUpdate(
     id,
-    { name, email, phone, address, specialization, departmentId },
+    {
+      firstName,
+      lastName,
+      email,
+      phone,
+      address,
+      specialization,
+      departmentId,
+    },
     { new: true }
   );
   res.send({ type: "success", status_code: 200, data: updatedEmployee });
