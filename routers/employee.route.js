@@ -6,6 +6,7 @@ const {
   deleteEmployee,
   updateEmployee,
   loginEmployee,
+  updatePassword
 } = require("../controllers/employee.controller");
 const router = express.Router();
 
@@ -15,5 +16,6 @@ router.post("/register", createEmployee);
 router.post("/login", loginEmployee);
 router.delete("/:id", deleteEmployee);
 router.put("/:id", updateEmployee);
+router.put("/update_password/:id", updatePassword);
 
 module.exports = router;

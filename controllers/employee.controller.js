@@ -163,26 +163,16 @@ const deleteEmployee = async (req, res) => {
   } catch (err) {
     res.send({
       type: "error",
-      message: "Could not employee Doctor",
+      message: "Could not delete employee record",
       error: err.message,
     });
   }
 };
 
 const updateEmployee = async (req, res) => {
-  const id = req.params.id;
-  const {
-    firstName,
-    lastName,
-    email,
-    phone,
-    address,
-    specialization,
-    departmentId,
-  } = req.body;
-  const updatedEmployee = await employeeModel.findByIdAndUpdate(
-    id,
-    {
+  try {
+    const id = req.params.id;
+    const {
       firstName,
       lastName,
       email,
@@ -190,10 +180,65 @@ const updateEmployee = async (req, res) => {
       address,
       specialization,
       departmentId,
-    },
-    { new: true }
-  );
-  res.send({ type: "success", status_code: 200, data: updatedEmployee });
+      profile_image,
+    } = req.body;
+    const updatedEmployee = await employeeModel.findByIdAndUpdate(
+      id,
+      {
+        firstName,
+        lastName,
+        email,
+        phone,
+        address,
+        specialization,
+        departmentId,
+        profile_image,
+      },
+      { new: true }
+    );
+    if (!updatedEmployee) {
+      res.send({ type: "error", message: "Invalid employee id" });
+      return;
+    }
+    res.send({ type: "success", status_code: 200, data: updatedEmployee });
+  } catch (err) {
+    res.send({
+      type: "error",
+      message: "Could not update employee",
+      error: err.message,
+    });
+  }
+};
+
+const updatePassword = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const employee = await employeeModel.findById(id);
+    const compare_password = await bcrypt.compare(
+      req.body.oldPassword,
+      employee.password
+    );
+
+    if (!compare_password) {
+      res.send({ type: "error", message: "Invalid Old Password" });
+      return;
+    }
+    const encrypt_password = await bcrypt.hash(req.body.newPassword, 12);
+    const updatedEmployee = await employeeModel.findByIdAndUpdate(
+      id,
+      {
+        password: encrypt_password,
+      },
+      { new: true }
+    );
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (err) {
+    res.send({
+      type: "error",
+      message: "Could not update employee",
+      error: err.message,
+    });
+  }
 };
 
 module.exports = {
@@ -203,4 +248,5 @@ module.exports = {
   deleteEmployee,
   updateEmployee,
   loginEmployee,
+  updatePassword,
 };
