@@ -14,6 +14,9 @@ const EmployeeSchema = mongoose.Schema(
       enum: ["Doctor", "Nurse", "Accountant", "Receptionist", "Pharmacist"],
       required: true,
     },
+    profile_image: {
+      type: String,
+    }
   },
   { timestamps: true }
 );
