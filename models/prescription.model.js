@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const prescriptionSchema = new mongoose.Schema({
     patientId: mongoose.Schema.Types.ObjectId,
     doctorId: mongoose.Schema.Types.ObjectId,
+    nurse: mongoose.Schema.Types.ObjectId,
+    bed: mongoose.Schema.Types.ObjectId,
     medications: [{
       medicationId: mongoose.Schema.Types.ObjectId,
       dosage: String

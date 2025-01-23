@@ -31,5 +31,23 @@ const getPatientPrescriptions = async (req, res) => {
       res.status(400).send({ error: 'Failed to retrieve prescriptions', details: err.message });
     }
 };
+// Get all Prescription
+const getAllPrescriptions = async (req, res) => {
+    try {
+        const prescriptions = await Prescription.find() // Retrieve all prescriptions
+            .populate("patientId", "name email") // Optionally populate patient details
+            .populate("doctorId", "firstName lastName"); // Optionally populate doctor details
 
-module.exports = {createPrescription, getPatientPrescriptions};
+        res.status(200).json({
+            message: "Prescriptions retrieved successfully",
+            data: prescriptions,
+        });
+    } catch (error) {
+        console.error(error); // Log the error for debugging
+        res.status(500).json({ message: "Error retrieving prescriptions", error: error.message });
+    }
+};
+
+
+
+module.exports = {createPrescription, getPatientPrescriptions, getAllPrescriptions};

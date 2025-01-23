@@ -9,8 +9,8 @@ const {
 } = require("../controllers/accountant.controller");
 const router = express.Router();
 
-router.get("/get", getAccountant);
-router.get("/get/:id", getSingleAccountant);
+router.get("/", getAccountant);
+router.get("/:id", getSingleAccountant);
 router.post("/register", AccountantRegister);
 router.post("/login", loginAccountant);
 router.delete("/:id", deleteAccountant);
