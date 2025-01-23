@@ -6,8 +6,11 @@ const session = require("express-session");
 const doctorRouter = require("./routers/doctor.route");
 const accountantRouter = require("./routers/accountant.route");
 const prescriptionRouter = require("./routers/prescription.route");
+const medicationRoute = require("./routers/medicationRoute");
 const patientRoute = require("./routers/patient.route");
 const nurseRoute = require("./routers/nurseRoute");
+const bedAllotmentRoute = require("./routers/bedAllotmentRoute");
+const bedRoute = require("./routers/bedRoute");
 const vitalsRoute = require("./routers/vitalsRoute");
 const receptionistRoute = require("./routers/receptionist.route");
 const queueRoute = require("./routers/queue.route");
@@ -51,6 +54,10 @@ app.get("/api", (req, res) => {
   res.send("Welcome to HMS api");
 });
 
+app.use("/api/nurse", nurseRoute);
+app.use("/api/vitals", vitalsRoute);
+app.use("/api/bedallotment", bedAllotmentRoute);
+app.use("/api/bed", bedRoute);
 app.use("/api/doctor", doctorRouter);
 app.use("/api/accountant", accountantRouter);
 app.use("/api/prescription", prescriptionRouter);
@@ -63,3 +70,4 @@ app.use("/api/nurse", nurseRoute);
 app.use("/api/vitals", vitalsRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/department", departmentRoute);
+app.use("/api/medication", medicationRoute);
