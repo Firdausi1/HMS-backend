@@ -3,9 +3,13 @@ require("dotenv").config();
 const express = require("express");
 const MongoStore = require("connect-mongo");
 const session = require("express-session");
+const doctorRouter = require("./routers/doctor.route");
+const accountantRouter = require("./routers/accountant.route");
+const prescriptionRouter = require("./routers/prescription.route");
 const patientRoute = require("./routers/patient.route");
 const nurseRoute = require("./routers/nurseRoute");
 const bedAllotmentRoute = require("./routers/bedAllotmentRoute");
+const bedRoute = require("./routers/bedRoute");
 const vitalsRoute = require("./routers/vitalsRoute");
 const receptionistRoute = require("./routers/receptionist.route");
 const queueRoute = require("./routers/queue.route");
@@ -45,6 +49,7 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+
 app.get("/api", (req, res) => {
   res.send("Welcome to HMS api");
 });
@@ -52,8 +57,13 @@ app.get("/api", (req, res) => {
 app.use("/api/nurse", nurseRoute);
 app.use("/api/vitals", vitalsRoute);
 app.use("/api/bedallotment", bedAllotmentRoute);
+app.use("/api/bed", bedRoute);
+app.use("/api/doctor", doctorRouter);
+app.use("/api/accountant", accountantRouter);
+app.use("/api/prescription", prescriptionRouter);
 app.use("/api/patients", patientRoute);
 app.use("/api/receptionist", receptionistRoute);
 app.use("/api/queue",queueRoute);
 app.use("/api/appointment",appointmentRoute);
+
 
