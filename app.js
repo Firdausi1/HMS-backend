@@ -17,6 +17,7 @@ const queueRoute = require("./routers/queue.route");
 const appointmentRoute = require("./routers/appointment.route");
 const adminRoute = require("./routers/admin.route");
 const departmentRoute = require("./routers/department.route");
+const employeeRoute = require("./routers/employee.route");
 const mongoose = require("mongoose");
 const cors = require("cors");
 
@@ -71,3 +72,4 @@ app.use("/api/vitals", vitalsRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/department", departmentRoute);
 app.use("/api/medication", medicationRoute);
+app.use("/api/employee", employeeRoute);
