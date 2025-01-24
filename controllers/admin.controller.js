@@ -90,8 +90,40 @@ const updateAdmin = async (req, res) => {
   }
 };
 
+const updatePassword = async (req, res) => {
+  const { admin_id } = req.params;
+  try {
+    const admin = await adminModel.findById(admin_id);
+    const compare_password = await bcrypt.compare(
+      req.body.oldPassword,
+      admin.password
+    );
+
+    if (!compare_password) {
+      res.send({ type: "error", message: "Invalid Old Password" });
+      return;
+    }
+    const encrypt_password = await bcrypt.hash(req.body.newPassword, 12);
+    await adminModel.findByIdAndUpdate(
+      admin_id,
+      {
+        password: encrypt_password,
+      },
+      { new: true }
+    );
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (err) {
+    res.send({
+      type: "error",
+      message: "Could not update password",
+      error: err.message,
+    });
+  }
+};
+
 module.exports = {
   createAdmin,
   updateAdmin,
   loginAdmin,
+  updatePassword,
 };

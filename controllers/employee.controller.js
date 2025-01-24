@@ -224,7 +224,7 @@ const updatePassword = async (req, res) => {
       return;
     }
     const encrypt_password = await bcrypt.hash(req.body.newPassword, 12);
-    const updatedEmployee = await employeeModel.findByIdAndUpdate(
+    await employeeModel.findByIdAndUpdate(
       id,
       {
         password: encrypt_password,
@@ -235,7 +235,7 @@ const updatePassword = async (req, res) => {
   } catch (err) {
     res.send({
       type: "error",
-      message: "Could not update employee",
+      message: "Could not update password",
       error: err.message,
     });
   }
