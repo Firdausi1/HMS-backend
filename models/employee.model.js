@@ -1,18 +1,25 @@
 const mongoose = require("mongoose");
 
-const AccountantSchema = mongoose.Schema(
+const EmployeeSchema = mongoose.Schema(
   {
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
-    username: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    phoneNo: { type: String, required: true },
+    phone: { type: String, required: true },
     address: { type: String, required: true },
     departmentId: mongoose.Schema.Types.ObjectId,
+    role: {
+      type: String,
+      enum: ["Doctor", "Nurse", "Accountant", "Receptionist", "Pharmacist"],
+      required: true,
+    },
+    profile_image: {
+      type: String,
+    }
   },
   { timestamps: true }
 );
 
-const Accountant = mongoose.model("Accountant", AccountantSchema);
-module.exports = Accountant;
+const employeeModel = mongoose.model("Employee", EmployeeSchema);
+module.exports = employeeModel;
