@@ -96,7 +96,7 @@ const createEmployee = async (req, res) => {
       res.status(401).json({ message: "couldn't create Employee" });
     }
   } catch (err) {
-    res.send({
+    res.status(401).json({
       type: "error",
       message: "could not create Employee",
       error: err.message,
@@ -111,7 +111,7 @@ const loginEmployee = async (req, res) => {
     if (email && password) {
       const employee = await employeeModel.findOne({ email: email });
       if (!employee) {
-        res.send({ type: "error", message: "Employee Not Found" });
+        res.status(404).json({ type: "error", message: "Employee Not Found" });
         return;
       }
       const compare_password = await bcrypt.compare(
@@ -119,10 +119,12 @@ const loginEmployee = async (req, res) => {
         employee.password
       );
       if (!compare_password) {
-        res.send({ type: "error", message: "Invalid email or Password" });
+        res
+          .status(401)
+          .json({ type: "error", message: "Invalid email or Password" });
         return;
       }
-      res.send({
+      res.status(201).json({
         type: "success",
         message: "Employee Login Successful",
         data: {
@@ -140,10 +142,10 @@ const loginEmployee = async (req, res) => {
         },
       });
     } else {
-      res.send({ type: "error", message: "Invalid Credentials" });
+      res.status(401).json({ type: "error", message: "Invalid Credentials" });
     }
   } catch (err) {
-    res.send({
+    res.status(401).json({
       type: "error",
       message: "Could not Login Doctor",
       error: err.message,
@@ -161,7 +163,7 @@ const deleteEmployee = async (req, res) => {
       message: "Employee Deleted Successfully",
     });
   } catch (err) {
-    res.send({
+    res.status(401).json({
       type: "error",
       message: "Could not delete employee record",
       error: err.message,
@@ -200,7 +202,23 @@ const updateEmployee = async (req, res) => {
       res.send({ type: "error", message: "Invalid employee id" });
       return;
     }
-    res.send({ type: "success", status_code: 200, data: updatedEmployee });
+    res.send({
+      type: "success",
+      status_code: 200,
+      data: {
+        id: updatedEmployee._id,
+        firstName: updatedEmployee.firstName,
+        lastName: updatedEmployee.lastName,
+        email: updatedEmployee.email,
+        username: updatedEmployee.username,
+        specialization: updatedEmployee.specialization,
+        phone: updatedEmployee.phone,
+        address: updatedEmployee.address,
+        departmentId: updatedEmployee.departmentId,
+        role: updatedEmployee.role,
+        profile_image: updatedEmployee.profile_image,
+      },
+    });
   } catch (err) {
     res.send({
       type: "error",
