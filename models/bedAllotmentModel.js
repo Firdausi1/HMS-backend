@@ -9,7 +9,7 @@ const bedAllotmentSchema =  new mongoose.Schema({
     nurse: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Nurse",
-      required: true,
+      // required: true,
     },
     bed: {
       type: mongoose.Schema.Types.ObjectId,

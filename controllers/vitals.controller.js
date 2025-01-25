@@ -5,7 +5,7 @@ const vitalsModel = require("../models/vitalsModel");
 // creating api to record patient's vital signs
 const addVitals = async (req, res) => {
   try {
-    const { patientId, nurseId, temperature, bloodPressure, heartRate, respiratoryRate, oxygenSaturation, notes } = req.body;
+    const { patientId, temperature, bloodPressure, heartRate, respiratoryRate, oxygenSaturation, notes } = req.body;
 
   
     // check if patient exists
@@ -13,13 +13,13 @@ const addVitals = async (req, res) => {
     if (!patient) return res.status(404).send({ message: "Patient not found"});
 
     // check if nurse exists
-    const nurse = await nurseModel.findById(nurseId);
-    if (!nurse) return res.status(404).send({ message: "Nurse not found"});
+    // const nurse = await nurseModel.findById(nurseId);
+    // if (!nurse) return res.status(404).send({ message: "Nurse not found"});
 
     // create a new patient vitals record
     const newVitals = new vitalsModel({
       patient: patient._id,
-      nurse: nurse._id,
+      // nurse: nurse._id,
       temperature,
       bloodPressure,
       heartRate,
