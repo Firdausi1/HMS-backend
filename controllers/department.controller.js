@@ -66,9 +66,35 @@ const updateDepartment = async (req, res) => {
   }
 };
 
+const deleteDepartment = async (req, res) => {
+  try {
+    const { department_id } = req.params;
+    const department = await departmentModel.findByIdAndDelete(department_id);
+    if (!department) {
+      res.send({
+        status_code: 400,
+        message: "Department doesn't exists",
+      });
+      return;
+    }
+    res.send({
+      type: "success",
+      status_code: 200,
+      message: "Department Deleted Successfully",
+    });
+  } catch (err) {
+    res.send({
+      type: "error",
+      message: "Could not delete Department record",
+      error: err.message,
+    });
+  }
+};
+
 module.exports = {
   createDepartment,
   updateDepartment,
   getDepartment,
   getDepartments,
+  deleteDepartment,
 };
