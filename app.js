@@ -12,13 +12,13 @@ const nurseRoute = require("./routers/nurseRoute");
 const bedAllotmentRoute = require("./routers/bedAllotmentRoute");
 const bedRoute = require("./routers/bedRoute");
 const vitalsRoute = require("./routers/vitalsRoute");
+const pharmacistRoute = require("./routers/pharmacistRoute");
 const receptionistRoute = require("./routers/receptionist.route");
 const queueRoute = require("./routers/queue.route");
 const appointmentRoute = require("./routers/appointment.route");
 const adminRoute = require("./routers/admin.route");
 const departmentRoute = require("./routers/department.route");
 const employeeRoute = require("./routers/employee.route");
-const pharmacistRoute = require("./routers/pharmacistRoute");
 const mongoose = require("mongoose");
 const cors = require("cors");
 
@@ -72,5 +72,6 @@ app.use("/api/vitals", vitalsRoute);
 app.use("/api/admin", adminRoute);
 app.use("/api/department", departmentRoute);
 app.use("/api/medication", medicationRoute);
-app.use("/api/employee", employeeRoute);
 app.use("/api/pharmacist", pharmacistRoute);
+app.use("/api/employee", employeeRoute);
+

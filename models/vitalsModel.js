@@ -9,7 +9,7 @@ const vitalsSchema = new mongoose.Schema({
   nurse: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Nurse",
-    required: true,
+    // required: true,
   },
   bloodPressure: {
     systolic: { type: Number, required: true }, // e.g . 120

@@ -4,92 +4,66 @@ const Medication = require("../models/medication.model");
 
 
 const createPrescription = async (req, res) => {
-    const { patientId, medications } = req.body;
+    const { patient, medications, notes } = req.body;
 
     const prescription = new Prescription({
-      patientId,
-      doctorId: req.user._id,
+      patient,
       medications,
+      notes,
     });
   
     try {
       await prescription.save();
-      res.send('Prescription created successfully');
+      res.status(200).send({
+        message: "Prescription created successfully",
+        data: prescription
+      });
     } catch (err) {
       console.error(err);
       res.status(400).send({ error: 'Failed to create prescription', details: err.message });
     }
 };
 
-// Get a specific Patient's Prescription
-const getPatientPrescription = async (req, res) => {
-    const { prescriptionId } = req.params; // Expecting prescriptionId in the request parameters
-    try {
-        const prescription = await Prescription.findById(prescriptionId)
-            .populate("patientId", "name email") // Optionally populate patient details
-            .populate("doctorId", "firstName lastName"); // Optionally populate doctor details
-
-        if (!prescription) {
-            return res.status(404).send({ error: 'Prescription not found' });
-        }
-
-        res.json(prescription);
-    } catch (err) {
-        console.error(err);
-        res.status(400).send({ error: 'Failed to retrieve prescription', details: err.message });
-    }
-};
-
-// Get all Prescriptions
-const getAllPrescriptions = async (req, res) => {
-    try {
-        const prescriptions = await Prescription.find() // Retrieve all prescriptions
-            .populate("patientId", "name email") // Optionally populate patient details
-            .populate("doctorId", "firstName lastName"); // Optionally populate doctor details
-
-        res.status(200).json({
-            message: "Prescriptions retrieved successfully",
-            data: prescriptions,
-        });
-    } catch (error) {
-        console.error(error); // Log the error for debugging
-        res.status(500).json({ message: "Error retrieving prescriptions", error: error.message });
-    }
-};
-
-// Update a Prescription
-const updatePrescription = async (req, res) => {
-  const { prescriptionId } = req.params; // Expecting prescriptionId in the request parameters
-  const updates = req.body; // Get the updates from the request body
-
+// Get Patient's Prescriptions
+const getPatientPrescriptions = async (req, res) => {
   try {
-      const prescription = await Prescription.findByIdAndUpdate(prescriptionId, updates, { new: true, runValidators: true })
-          .populate("patientId", "name email") // Optionally populate patient details
-          .populate("doctorId", "firstName lastName"); // Optionally populate doctor details
+    const prescription = await Prescription.find()
+      .populate('patient', 'name') // Populate patient name
+      // .populate('doctor', 'firstName lastName') // Populate doctor name
+      .populate('medications.medication', 'name'); // Populate medication name
 
-      if (!prescription) {
-          return res.status(404).send({ error: 'Prescription not found' });
-      }
+    if (!prescription) {
+      return res.status(404).send({ error: 'Prescription not found' });
+    }
 
-      res.json({
-          message: "Prescription updated successfully",
-          data: prescription,
-      });
+    res.status(200).send({
+      message: 'Prescription fetched successfully',
+      data: prescription,
+    });
   } catch (err) {
-      console.error(err);
-      res.status(400).send({ error: 'Failed to update prescription', details: err.message });
+    console.error(err);
+    res.status(400).send({ error: 'Failed to fetch prescription', details: err.message });
   }
 };
 
-// Delete a Prescription
-const deletePrescription = async (req, res) => {
-    const { prescriptionId } = req.params; // Expecting prescriptionId in the request parameters
-    try {
-        await Prescription.findByIdAndDelete(prescriptionId);
-        res.json({ message: "Prescription deleted successfully" });
-    } catch (err) {
-        res.status(400).send({ error: 'Failed to delete prescription', details: err.message });
-    }
+// update patient prescription
+const updatePatientPrescription = async (req, res) => {
+  const { id } = req.params;
+  const { patient, medications, notes } = req.body;
+  try {
+    const prescription = await Prescription.findByIdAndUpdate(id, { patient, medications, notes }, { new: true });
+    if (!prescription) return res.status(404).send({ error: 'Prescription not found' });
+    res.status(200).send({ message: 'Prescription updated successfully', data: prescription });
+  } catch (error) {
+    res.status(500).send({
+      success: false,
+      message: "Failed to update prescription",
+      error: error.message
+    });
+  }
 };
 
-module.exports = {createPrescription, getAllPrescriptions, getPatientPrescription, updatePrescription, deletePrescription};
+
+
+
+module.exports = {createPrescription, getPatientPrescriptions, updatePatientPrescription};

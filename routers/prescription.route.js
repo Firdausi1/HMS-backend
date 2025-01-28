@@ -1,19 +1,16 @@
 const express = require("express");
 const {
   createPrescription,
-  getPatientPrescription,
-  getAllPrescriptions,
-  updatePrescription,
-  deletePrescription,
+  getPatientPrescriptions,
+  updatePatientPrescription,
   
 } = require("../controllers/prescription.controller");
 const router = express.Router();
 
 router.post("/create", createPrescription);
-router.get("/getPrescription", getPatientPrescription);
-router.get('/prescriptions', getAllPrescriptions);
-router.put("/update", updatePrescription);
-router.delete("/delete", deletePrescription);
+router.get("/getPrescription", getPatientPrescriptions);
+router.put("/update/:id", updatePatientPrescription);
+
 
 
 module.exports = router;
