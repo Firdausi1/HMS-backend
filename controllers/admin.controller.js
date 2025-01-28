@@ -87,7 +87,7 @@ const updateAdmin = async (req, res) => {
     res.status(200).json({
       message: "Record updated successfully",
       data: {
-    res.status(200).json({ message: "Record updated successfully", admin });
+        id: admin._id,
         firstName: admin.firstName,
         lastName: admin.lastName,
         email: admin.email,
