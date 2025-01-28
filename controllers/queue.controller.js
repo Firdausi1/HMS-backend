@@ -58,11 +58,12 @@ const getAllPatientsInQueue = async (req, res) => {
 const editPatientInQueue = async (req, res) => {
   try {
     const { queue_id } = req.params; // Queue entry ID
-    const { patient_id } = req.body; // New patient ID
+    const { patient_id, vitals } = req.body; // New patient ID
+    
 
     // Validate the provided queue ID and patient ID
-    if (!queue_id || !patient_id) {
-      return res.status(400).json({ message: 'Queue ID and Patient ID are required' });
+    if (!queue_id || !patient_id || !vitals) {
+      return res.status(400).json({ message: 'Queue ID, Patient ID and Vitals are required' });
     }
 
     // Check if the new patient exists in the database
@@ -71,10 +72,15 @@ const editPatientInQueue = async (req, res) => {
       return res.status(404).json({ message: 'Patient not found' });
     }
 
+    // Validate the `vitals` value
+    if (!['Pending', 'Completed'].includes(vitals)) {
+      return res.status(400).json({ message: 'Invalid vitals value.' });
+    }
+
     // Update the patient in the queue
     const updatedQueueEntry = await queueModel.findByIdAndUpdate(
       queue_id,
-      { patient: patient_id },
+      { patient: patient_id, vitals },
       { new: true }
     ).populate('patient', 'name email');
 

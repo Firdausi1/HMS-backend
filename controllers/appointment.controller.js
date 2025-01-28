@@ -19,6 +19,18 @@ const createAppointment = async (req, res) => {
 
     const patientName = patient.name; // Assuming the patient model has a 'name' field
 
+    // Check if there's already an appointment for this doctor at the given time and date
+    const existingAppointment = await appointmentModel.findOne({ 
+      doctorName, 
+      date, 
+      time 
+    });
+
+    if (existingAppointment) {
+      return res.status(400).json({ message: "Appointment already exists at this time for the selected doctor." });
+    }
+
+
     // Create and save the appointment
     const newAppointment = new appointmentModel({
       patient: patientId,
