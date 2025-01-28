@@ -6,14 +6,14 @@ const bedModel = require("../models/bedModel");
 // creating api to add bed allotment
 const addBedAllotment = async (req, res) => {
   try {
-    const { patientId, nurseId, bedId, allotmentDate, dischargeDate, status, notes } = req.body;
+    const { patientId, bedId, allotmentDate, dischargeDate, status, notes } = req.body;
 
     // find the patient, nurse and bed
     const patient = await patientModel.findById(patientId);
-    const nurse = await nurseModel.findById(nurseId);
+    // const nurse = await nurseModel.findById(nurseId);
     const bed = await bedModel.findById(bedId);
 
-    if(!patient || !nurse || !bed) {
+    if(!patient || !bed) {
       return res.status(404).send({ 
         success: false,
         message: "Patient, Nurse or Bed not found",
@@ -25,7 +25,7 @@ const addBedAllotment = async (req, res) => {
     // create a new bed allotment
     const newBedAllotment = new bedAllotmentModel({
       patient: patient._id,
-      nurse: nurse._id,
+      // nurse: nurse._id,
       bed: bed._id,
       allotmentDate,
       dischargeDate,

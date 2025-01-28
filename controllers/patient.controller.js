@@ -12,6 +12,26 @@ const getAllPatients = async (req, res) => {
   }
 };
 
+// api to get all patients by name
+const getPatientsBySearch = async (req, res) => {
+  try {
+    const { name } = req.query;
+    let patients;
+    if (name) {
+      // If a name is provided, search for patients matching the name (case-insensitive)
+      patients = await patientModel.find({ name: { $regex: name, $options: "i" } });
+    } else {
+      // If no name is provided, return all patients
+      patients = await patientModel.find();
+    }
+    if (!patients) return res.status(401).json({ message: "No Patients record found" });
+    res.status(200).json(patients);
+  } catch (error) {
+    res.status(500).json({ message : error.message });
+  }
+};
+
+
 const getPatient = async (req, res) => {
   try {
     const { patient_id } = req.query;
@@ -78,4 +98,4 @@ const deletePatient = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-module.exports = { getAllPatients, getPatient, createPatient ,updatePatient, deletePatient};
+module.exports = { getAllPatients, getPatientsBySearch, getPatient, createPatient ,updatePatient, deletePatient};

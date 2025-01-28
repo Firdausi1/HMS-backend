@@ -12,6 +12,11 @@ const queueSchema = new mongoose.Schema(
       type: String, 
       required: true 
     },
+    vitals: {
+      type: String,
+      enum: ['Pending', 'Completed'],
+      default: 'Pending',
+    }
   },
   { timestamps: true }  // This will automatically add createdAt and updatedAt fields
 );
