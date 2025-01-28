@@ -84,9 +84,50 @@ const updateAdmin = async (req, res) => {
       return res.status(404).json({ message: "record not found" });
     }
 
-    res.status(200).json({ message: "Record updated successfully", admin });
+    res.status(200).json({
+      message: "Record updated successfully",
+      data: {
+        id: admin._id,
+        firstName: admin.firstName,
+        lastName: admin.lastName,
+        email: admin.email,
+        address: admin.address,
+        phone: admin.phone,
+      },
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+
+const updatePassword = async (req, res) => {
+  const { admin_id } = req.params;
+  try {
+    const admin = await adminModel.findById(admin_id);
+    const compare_password = await bcrypt.compare(
+      req.body.oldPassword,
+      admin.password
+    );
+
+    if (!compare_password) {
+      res.send({ type: "error", message: "Invalid Old Password" });
+      return;
+    }
+    const encrypt_password = await bcrypt.hash(req.body.newPassword, 12);
+    await adminModel.findByIdAndUpdate(
+      admin_id,
+      {
+        password: encrypt_password,
+      },
+      { new: true }
+    );
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (err) {
+    res.send({
+      type: "error",
+      message: "Could not update password",
+      error: err.message,
+    });
   }
 };
 
@@ -94,4 +135,5 @@ module.exports = {
   createAdmin,
   updateAdmin,
   loginAdmin,
+  updatePassword,
 };
