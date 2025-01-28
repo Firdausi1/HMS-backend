@@ -41,41 +41,6 @@ const addPatientToQueue = async (req, res) => {
 };
 
 
-// const addPatientToQueue = async (req, res) => {
-//   try {
-//     const { patient_id } = req.body;
-
-//     // Validate that the patient ID is provided
-//     if (!patient_id) {
-//       return res.status(400).json({ message: 'Patient ID is required' });
-//     }
-
-//     // Check if the patient exists in the database
-//     const patientExists = await patientModel.findById(patient_id);
-//     if (!patientExists) {
-//       return res.status(404).json({ message: 'Patient not found' });
-//     }
-
-//     // Check if the patient is already in the queue
-//     const isInQueue = await queueModel.findOne({ patient: patient_id });
-//     if (isInQueue) {
-//       return res.status(400).json({ message: 'Patient is already in the queue' });
-//     }
-
-//     // Add the patient to the queue
-//     const newQueueEntry = new queueModel({ patient: patient_id });
-//     await newQueueEntry.save();
-
-//     res.status(201).json({
-//       message: 'Patient added to the queue successfully',
-//       data: newQueueEntry,
-//     });
-//   } catch (error) {
-//     console.error('Error adding patient to the queue:', error); // Log for debugging
-//     res.status(500).json({ message: 'Error adding patient to the queue', error: error.message });
-//   }
-// };
-
 
 
 // Get all patients in the queue
