@@ -12,14 +12,41 @@ const getAllPatients = async (req, res) => {
   }
 };
 
+// const getPatient = async (req, res) => {
+//   try {
+//     const { patient_id } = req.query;
+//     const patient = await patientModel.findById(patient_id);
+//     if (!patient) {
+//       return res.status(401).json({ message: "Invalid patient id" });
+//     }
+//     res.status(200).json(patient);
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// };
 const getPatient = async (req, res) => {
   try {
-    const { patient_id } = req.query;
+    const { patient_id } = req.params; // Assuming you're using params
     const patient = await patientModel.findById(patient_id);
+    
     if (!patient) {
-      return res.status(401).json({ message: "Invalid patient id" });
+      return res.status(404).json({ message: "Patient not found" });
     }
-    res.status(200).json(patient);
+    
+    // Return the patient data, including the ID
+    res.status(200).json({
+      _id: patient._id,
+      name: patient.name,
+      email: patient.email,
+      gender: patient.gender,
+      bloodGroup: patient.bloodGroup,
+      age: patient.age,
+      phone: patient.phone,
+      address: patient.address,
+      createdAt: patient.createdAt,
+      updatedAt: patient.updatedAt,
+      // Include any other relevant fields
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
