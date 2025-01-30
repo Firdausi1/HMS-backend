@@ -203,10 +203,7 @@ const deleteBedAllotment = async (req, res) => {
     const deletedBedAllotment = await bedAllotmentModel.findByIdAndDelete(id);
 
     if (!deletedBedAllotment) return res.status(404).send({ success: false, message: "Bed Allotment not found" });
-    res.status(200).send({ 
-      success: true, 
-      message: "Bed Allotment deleted"
-    });
+   
 
     // update the bed status to Available
     const bed = await bedModel.findById(deletedBedAllotment.bed);
