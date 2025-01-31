@@ -30,7 +30,7 @@ const getPatientPrescriptions = async (req, res) => {
     const prescription = await Prescription.find()
       .populate('patient', 'name') // Populate patient name
       // .populate('doctor', 'firstName lastName') // Populate doctor name
-      .populate('medications.medication', 'name'); // Populate medication name
+      .populate('medications.medication', 'name price'); // Populate medication name
 
     if (!prescription) {
       return res.status(404).send({ error: 'Prescription not found' });
