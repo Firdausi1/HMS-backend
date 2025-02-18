@@ -1,4 +1,5 @@
 const patientModel = require("../models/patient.model");
+const mongoose = require("mongoose");
 
 const getAllPatients = async (req, res) => {
   try {
@@ -14,23 +15,30 @@ const getAllPatients = async (req, res) => {
 
 // api to get all patients by name
 const getPatientsBySearch = async (req, res) => {
+  const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
   try {
-    const { name } = req.query;
-    let patients;
-    if (name) {
-      // If a name is provided, search for patients matching the name (case-insensitive)
-      patients = await patientModel.find({ name: { $regex: name, $options: "i" } });
-    } else {
-      // If no name is provided, return all patients
-      patients = await patientModel.find();
+    const { gender, bloodGroup, search } = req.query;
+    let filter = {};
+
+    if (gender) filter.gender = gender;
+    if (bloodGroup) filter.bloodGroup = bloodGroup;
+
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: "i" } }, // Case-insensitive name search
+      ];
+      if (isValidObjectId(search)) {
+        filter.$or.push({ _id: search }); // Add _id search if it's a valid ObjectId
+      }
     }
-    if (!patients) return res.status(401).json({ message: "No Patients record found" });
+    const patients = await patientModel.find(filter);
+    if (!patients)
+      return res.status(401).json({ message: "No Patients record found" });
     res.status(200).json(patients);
   } catch (error) {
-    res.status(500).json({ message : error.message });
+    res.status(500).json({ message: error.message });
   }
 };
-
 
 const getPatient = async (req, res) => {
   try {
@@ -98,4 +106,11 @@ const deletePatient = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-module.exports = { getAllPatients, getPatientsBySearch, getPatient, createPatient ,updatePatient, deletePatient};
+module.exports = {
+  getAllPatients,
+  getPatientsBySearch,
+  getPatient,
+  createPatient,
+  updatePatient,
+  deletePatient,
+};
