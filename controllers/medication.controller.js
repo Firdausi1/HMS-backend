@@ -36,6 +36,18 @@ const Medication = require("../models/medication.model");
     }
   };
 
+  // Get Medication by patient ID
+  const getMedicationByPatientId = async (req, res) => {
+    const patientId = req.params.patientId;
+    try {
+      const medication = await Medication.findOne({ patientId });
+      res.status(200).send({ success: true, message: "Medication retrieved successfully",
+        data: medication });
+        } catch (err) {
+          res.status(400).send(err);
+          }
+          };
+
   // creating api to update medication
   const updateMedication = async (req, res) => {
     try {
@@ -70,4 +82,4 @@ const Medication = require("../models/medication.model");
     }
   };
 
-  module.exports = {addMedication, getAllMedications, updateMedication, DeleteMedication};
+  module.exports = {addMedication, getAllMedications, updateMedication, DeleteMedication, getMedicationByPatientId};

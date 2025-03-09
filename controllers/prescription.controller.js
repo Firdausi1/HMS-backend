@@ -46,6 +46,34 @@ const getPatientPrescriptions = async (req, res) => {
   }
 };
 
+// Get Patient's Prescriptions by Patient ID
+const getSinglePrescription = async (req, res) => {
+  try {
+    const { patientId } = req.query; // Get patientId from query parameters
+    const { id: prescriptionId } = req.params; // Get prescriptionId from route parameters
+    console.log(`Fetching prescription ID: ${prescriptionId} for patient ID: ${patientId}`); // Log IDs
+
+    const prescription = await Prescription.findOne({ _id: prescriptionId, patient: patientId }) // Filter by patient ID and prescription ID
+      .populate('patient', 'name') // Populate patient name
+      // .populate('doctor', 'firstName lastName') // Populate doctor name
+      .populate('medications.medication', 'name'); // Populate medication name
+
+    console.log(`Found prescription: ${JSON.stringify(prescription)}`); // Log found prescription
+
+    if (!prescription) {
+      return res.status(404).send({ error: 'Prescription not found for this patient. Please check the IDs and try again.' });
+    }
+
+    res.status(200).send({
+      message: 'Prescription fetched successfully',
+      data: prescription,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(400).send({ error: 'Failed to fetch prescription', details: err.message });
+  }
+};
+
 // update patient prescription
 const updatePatientPrescription = async (req, res) => {
   const { id } = req.params;
@@ -66,4 +94,4 @@ const updatePatientPrescription = async (req, res) => {
 
 
 
-module.exports = {createPrescription, getPatientPrescriptions, updatePatientPrescription};
+module.exports = {createPrescription, getPatientPrescriptions, updatePatientPrescription, getSinglePrescription};
